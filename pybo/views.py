@@ -21,3 +21,8 @@ def answer_create(request, question_id):
            create_date=timezone.now()).save()
 
     return redirect('pybo:detail', question_id=question_id)
+
+def answer_delete(request, question_id, answer_id):
+    Answer.objects.get(pk = answer_id, question_id=question_id).delete()
+
+    return redirect('pybo:detail', question_id=question_id)

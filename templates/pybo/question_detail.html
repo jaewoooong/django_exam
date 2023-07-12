@@ -8,6 +8,10 @@
     <ul>
         {% for answer in question.answer_set.all %}
         <li>{{ answer.content }}</li>
+        <form action="{% url 'pybo:answer_delete' question.id answer.id %}" method="post">
+            {% csrf_token %}
+            <input type="submit" value="delete">
+        </form>
         {% endfor %}
     </ul>
 </div>
