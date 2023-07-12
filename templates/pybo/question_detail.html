@@ -2,3 +2,11 @@
 <div>
     {{ question.content }}
 </div>
+<pre></pre>
+<a>↳</a>
+<form action="{% url 'pybo:answer_create' question.id %}" method="post">
+    {% csrf_token %}
+    <a>&nbsp;&nbsp;&nbsp;</a>
+    <textarea name="content" id="content" rows="15"></textarea>
+    <input type="submit" value="submit">
+</form>
