@@ -2,6 +2,16 @@
 <div>
     {{ question.content }}
 </div>
+
+<h5>There are {{ question.answer_set.count }} answers.</h5>
+<div>
+    <ul>
+        {% for answer in question.answer_set.all %}
+        <li>{{ answer.content }}</li>
+        {% endfor %}
+    </ul>
+</div>
+
 <pre></pre>
 <a>↳</a>
 <form action="{% url 'pybo:answer_create' question.id %}" method="post">
