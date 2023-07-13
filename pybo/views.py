@@ -1,6 +1,9 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from .models import Question, Answer
+
+from .froms import QuestionForm
+from .models import Answer, Question
+
 
 def index(request):
     question_list = Question.objects.order_by('-create_date')
@@ -26,3 +29,23 @@ def answer_delete(request, question_id, answer_id):
     Answer.objects.get(pk = answer_id, question_id=question_id).delete()
 
     return redirect('pybo:detail', question_id=question_id)
+
+def question_create(request):
+    if request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.create_date = timezone.now()
+            question.save()
+
+            return redirect('pybo:index')
+
+    if request.method == 'GET':
+        form = QuestionForm()
+        context = {'form':form}
+
+        return render(request, 'pybo/question_form.html', context)
+
+    context = {'form':form}
+
+    return render(request, 'pybo/question_form.html', context)
