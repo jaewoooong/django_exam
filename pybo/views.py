@@ -34,11 +34,6 @@ def answer_create(request, question_id):
     context = {'question': question, 'form': form}
     
     return render(request, 'pybo/question_detail.html', context)
-    # Answer(question=question, 
-    #        content=request.POST.get('content'), 
-    #        create_date=timezone.now()).save()
-
-    # return redirect('pybo:detail', question_id=question_id)
 
 def answer_delete(request, question_id, answer_id):
     Answer.objects.get(pk = answer_id, question_id=question_id).delete()
@@ -59,3 +54,10 @@ def question_create(request):
     context = {'form':form}
 
     return render(request, 'pybo/question_form.html', context)
+
+def question_delete(request, question_id):
+    Question.objects.get(pk = question_id).delete()
+    question_list = Question.objects.order_by('-create_date')
+    context = {'question_list': question_list}
+
+    return render(request, 'pybo/question_list.html', context)

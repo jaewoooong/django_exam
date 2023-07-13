@@ -17,7 +17,16 @@
             <td>
                 <a href="{% url 'pybo:detail' question.id %}">{{ question.subject }}</a>
             </td>
-            <td>{{ question.create_date }}</td>
+            <td>
+                
+                <form action="{% url 'pybo:question_delete' question.id %}" method="post">
+                    {% csrf_token %}
+                    <div class="d-flex justify-content-end">
+                        {{ question.create_date }}
+                        <input type="submit" value="질문 삭제" class="btn btn btn-danger float-right">
+                </form>
+            </td>
+            
         </tr>
         {% endfor %}
         {% else %}
