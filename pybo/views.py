@@ -1,7 +1,8 @@
+from django.http import HttpResponseNotAllowed
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .froms import QuestionForm
+from .froms import AnswerForm, QuestionForm
 from .models import Answer, Question
 
 
@@ -19,11 +20,25 @@ def detail(request, question_id):
 
 def answer_create(request, question_id):
     question = get_object_or_404(Question, pk=question_id)
-    Answer(question=question, 
-           content=request.POST.get('content'), 
-           create_date=timezone.now()).save()
+    if request.method == 'POST':
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.create_date = timezone.now()
+            answer.question = question
+            answer.save()
 
-    return redirect('pybo:detail', question_id=question_id)
+            return redirect('pybo:detail', question_id=question_id)
+    else:
+        return HttpResponseNotAllowed('Only POST is possible')
+    context = {'question': question, 'form': form}
+    
+    return render(request, 'pybo/question_detail.html', context)
+    # Answer(question=question, 
+    #        content=request.POST.get('content'), 
+    #        create_date=timezone.now()).save()
+
+    # return redirect('pybo:detail', question_id=question_id)
 
 def answer_delete(request, question_id, answer_id):
     Answer.objects.get(pk = answer_id, question_id=question_id).delete()
@@ -39,13 +54,8 @@ def question_create(request):
             question.save()
 
             return redirect('pybo:index')
-
-    if request.method == 'GET':
+    else:
         form = QuestionForm()
-        context = {'form':form}
-
-        return render(request, 'pybo/question_form.html', context)
-
     context = {'form':form}
 
     return render(request, 'pybo/question_form.html', context)
